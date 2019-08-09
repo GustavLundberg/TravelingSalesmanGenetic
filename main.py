@@ -7,18 +7,19 @@ from Chromosomes import *
 
 def plotBest(chromosome, cities, num_generations, curr_generation):
 	plt.subplot(int(math.sqrt(num_generations)) + 1, int(math.sqrt(num_generations)) + 1, curr_generation + 1, aspect='equal')
-	plt.subplots_adjust(hspace = 0.2)
+	plt.subplots_adjust(hspace = 0.5)
 	#matplotlib.pyplot.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=None, hspace=None)[source]
 	plt.title('Gen: ' + str(curr_generation))
 	chromosome.plotOne(cities)
 
+
 # Parameters
-num_cities = 8
-population_size = 5
+num_cities = 11
+population_size = 1200
 max_x = 1000
 max_y = 1000
-num_generations = 9
-len_intact = 3 # Parameter related to the breeding process
+num_generations = 60
+len_intact = 5 # Parameter related to the breeding process
 
 # Initialize cities and the first population of chromosomes
 cities = Cities(num_cities, max_x, max_y)
@@ -31,8 +32,9 @@ chromosomes = Chromosomes(num_cities, population_size)
 
 fitness_history = []
 
-
+plt.figure(1)
 for i in range(num_generations):
+	print('Gen ' + str(i) + ' out of ' + str(num_generations))
 	chromosomes.calculateFitness(cities)
 	fitness_history.append(mean(chromosomes.getFitness()))
 	#print('fitness: ', chromosomes.getFitness(), type(chromosomes.getFitness()))
@@ -40,12 +42,20 @@ for i in range(num_generations):
 	chromosomes.sortPopulation()
 	plotBest(chromosome = chromosomes.getChromosomes()[0], cities = cities, 
 		num_generations = num_generations, curr_generation = i)
-	chromosomes.breedPopulationAndUpdateCurrentPopulation(len_intact = len_intact, population_size = population_size)
+	if i < num_generations-1:
+		chromosomes.breedPopulationAndUpdateCurrentPopulation(len_intact = len_intact, population_size = population_size)
 
+# Plotting last generation
+plt.figure(2)
+chromosomes.getChromosomes()[0].plotOne(cities)
+#plotBest(chromosome = chromosomes.getChromosomes()[0], cities = cities, 
+#		num_generations = num_generations, curr_generation = num_generations-1)
+
+plt.figure(3)
+plt.xlabel('Generations')
+plt.ylabel('Average fitness')
+plt.plot(list(range(num_generations)), fitness_history)
 plt.show()
-
-#plt.plot(list(range(num_generations)), fitness_history)
-#plt.show()
 
 #chromosomes.getChromosomes()[0].plot(cities)
 

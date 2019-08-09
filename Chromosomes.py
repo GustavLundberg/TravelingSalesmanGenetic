@@ -43,10 +43,16 @@ class Chromosomes:
 		return
 
 	def selectChromosomes(self, num):
-		p = [1/f_outer *  1/sum([1/f_inner for f_inner in self.fitness]) for f_outer in self.fitness]
+		min_fitness = min(self.fitness)
+		max_fitness = max(self.fitness)
+		p_temp = [f/max_fitness for f in self.fitness]
+		#print('p_temp', p_temp)
+		p = [1/f_outer *  1/sum([1/f_inner for f_inner in p_temp]) for f_outer in p_temp]
+		#p = [1/f_outer *  1/sum([1/f_inner for f_inner in self.fitness]) for f_outer in self.fitness]
 		# Select one chromosome by randomly sampling an integer with weights being 1 / fitness (and then normalizing p, making sure it sums to one)
 		rand_ints = choice(list(range(self.population_size)), num, 
 			p = [1/f_outer *  1/sum([1/f_inner for f_inner in self.fitness]) for f_outer in self.fitness])
+		#print('p', p)
 		return [self.chromosomes[i] for i in rand_ints]
 
 	def breedPopulation(self, len_intact, population_size):
