@@ -6,24 +6,24 @@ from Chromosomes import *
 
 
 def plotBest(chromosome, cities, num_generations, curr_generation, curr_plot, plot_every_nth_generation):
-	plt.subplot(int(math.sqrt(num_generations) / plot_every_nth_generation) + 4, int(math.sqrt(num_generations) / plot_every_nth_generation) + 4, curr_plot + 1, aspect='equal')
+	plt.subplot(int(math.sqrt(num_generations) / plot_every_nth_generation) + 7, int(math.sqrt(num_generations) / plot_every_nth_generation) + 7, curr_plot + 1, aspect='equal')
 	plt.subplots_adjust(hspace = 0.5)
 	#matplotlib.pyplot.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=None, hspace=None)[source]
 	plt.title('Gen: ' + str(curr_generation))
 	chromosome.plotOne(cities)
 
 # Parameters
-num_cities = 25                                                       # 16
+num_cities = 15                                                       # 16 # 80
 population_size = 1000                                                # 1000
 max_x = 1000 
 max_y = 1000
-num_generations = 50                                                 # 200
+num_generations = 100                                                # 200 # 1000
 len_intact = 8 # Parameter related to the breeding process            # 8
 mutate_probability = 0.1                                              # 0.1
 reduce_factor = 100
 increase_factor = 2
-plot_generations = True
-plot_every_nth_generation = 5 # Plot only every nth generation
+plot_generations = False
+plot_every_nth_generation = 50 # Plot only every nth generation
 
 # Initialize cities and the first population of chromosomes
 cities = Cities(num_cities, max_x, max_y)
@@ -61,6 +61,7 @@ for i in range(num_generations):
 		chromosomes.mutateGeneration(probability = mutate_probability)
 		reduce_factor += 0
 		increase_factor = increase_factor*1.01 # Increase the increase factor with 1 % each iteration
+		#print('increase_factor = ', increase_factor)
 
 # Plots the best chromosome in all generations
 plt.figure(10)
