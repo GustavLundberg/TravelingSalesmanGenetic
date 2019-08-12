@@ -5,25 +5,30 @@ from Cities import *
 from Chromosomes import *
 
 
-def plotBest(chromosome, cities, num_generations, curr_generation):
-	plt.subplot(int(math.sqrt(num_generations)) + 1, int(math.sqrt(num_generations)) + 1, curr_generation + 1, aspect='equal')
+def plotBest(chromosome, cities, num_generations, curr_generation, curr_plot, plot_every_nth_generation):
+	plt.subplot(int(math.sqrt(num_generations) / plot_every_nth_generation) + 4, int(math.sqrt(num_generations) / plot_every_nth_generation) + 4, curr_plot + 1, aspect='equal')
 	plt.subplots_adjust(hspace = 0.5)
 	#matplotlib.pyplot.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=None, hspace=None)[source]
 	plt.title('Gen: ' + str(curr_generation))
 	chromosome.plotOne(cities)
 
-
 # Parameters
-num_cities = 11
-population_size = 1200
-max_x = 1000
+num_cities = 25                                                       # 16
+population_size = 1000                                                # 1000
+max_x = 1000 
 max_y = 1000
-num_generations = 60
-len_intact = 5 # Parameter related to the breeding process
+num_generations = 50                                                 # 200
+len_intact = 8 # Parameter related to the breeding process            # 8
+mutate_probability = 0.1                                              # 0.1
+reduce_factor = 100
+increase_factor = 2
+plot_generations = True
+plot_every_nth_generation = 5 # Plot only every nth generation
 
 # Initialize cities and the first population of chromosomes
 cities = Cities(num_cities, max_x, max_y)
 chromosomes = Chromosomes(num_cities, population_size)
+
 #print('gen0 : ', chromosomes.getChromosomes())
 #print('type : ', type(chromosomes))
 #chromosomes.calculateFitness(cities)
@@ -31,21 +36,38 @@ chromosomes = Chromosomes(num_cities, population_size)
 #print('fitness, gen0 : ', chromosomes.getFitness())
 
 fitness_history = []
-
-plt.figure(1)
+best_fitness = 1000000
+best_gen = 0
+count_plots = 0
 for i in range(num_generations):
 	print('Gen ' + str(i) + ' out of ' + str(num_generations))
 	chromosomes.calculateFitness(cities)
 	fitness_history.append(mean(chromosomes.getFitness()))
-	#print('fitness: ', chromosomes.getFitness(), type(chromosomes.getFitness()))
-	#print('fitness, gen', i, mean(chromosomes.getFitness()))
 	chromosomes.sortPopulation()
-	plotBest(chromosome = chromosomes.getChromosomes()[0], cities = cities, 
-		num_generations = num_generations, curr_generation = i)
-	if i < num_generations-1:
-		chromosomes.breedPopulationAndUpdateCurrentPopulation(len_intact = len_intact, population_size = population_size)
+	# Find the best chromosome ni all generations
+	if chromosomes.getFitness()[0] < best_fitness: # Note that getFitness gives you the distance, i.e. a low fitness is equal to a good result
+		best_fitness = chromosomes.getFitness()[0]
+		best_chromosome = chromosomes.getChromosomes()[0] # Save the best chromosome
+		best_gen = i
 
-# Plotting last generation
+	if plot_generations and i % plot_every_nth_generation == 0:
+		plt.figure(1)
+		plotBest(chromosome = chromosomes.getChromosomes()[0], cities = cities, 
+			num_generations = num_generations, curr_generation = i, curr_plot = count_plots, plot_every_nth_generation = plot_every_nth_generation)
+		count_plots += 1
+	if i < num_generations-1:
+		chromosomes.breedPopulationAndUpdateCurrentPopulation(len_intact = len_intact, population_size = population_size, 
+			reduce_factor = reduce_factor, increase_factor = increase_factor)
+		chromosomes.mutateGeneration(probability = mutate_probability)
+		reduce_factor += 0
+		increase_factor = increase_factor*1.01 # Increase the increase factor with 1 % each iteration
+
+# Plots the best chromosome in all generations
+plt.figure(10)
+plt.title('Best solution came from generation : ' + str(best_gen))
+best_chromosome.plotOne(cities)
+
+# Plots last generation
 plt.figure(2)
 chromosomes.getChromosomes()[0].plotOne(cities)
 #plotBest(chromosome = chromosomes.getChromosomes()[0], cities = cities, 

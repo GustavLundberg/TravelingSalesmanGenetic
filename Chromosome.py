@@ -1,5 +1,7 @@
 import random
+#from numpy.random import uniform
 from Cities import *
+
 
 class Chromosome():
 
@@ -26,10 +28,16 @@ class Chromosome():
 		plt.plot(x_coord, y_coord, 'ro')
 		plt.plot(x_coord, y_coord, 'b-')
 		plt.axis([0, max_x, 0, max_y])
-		#plt.show()
 
 	def distance(self, city1, city2):
 		return round(math.sqrt((city1.getX() - city2.getX()) ** 2 + (city1.getY() - city2.getY()) ** 2), 2)
+
+	def mutate(self):
+		r1 = random.randint(0, self.num_cities-1)
+		r2 = random.randint(0, self.num_cities-1)
+		self.chromosome[r1], self.chromosome[r2] = self.chromosome[r2], self.chromosome[r1]
+		return
+
 
 	def fitness(self, cities):
 		cities_sorted = [cities.getCities()[i] for i in self.chromosome]
@@ -67,7 +75,6 @@ class Chromosome():
 		child = Chromosome(self.num_cities, randomize = False, chromosome = chromosome) # Create a new instance of Chromosome
 		return child
 
-
 #c1 = Chromosome(num_cities = 5,  randomize = False, chromosome = [1, 4, 0, 2, 3])
 #c2 = Chromosome(num_cities = 5,  randomize = False, chromosome = [2, 3, 1, 4, 0])
 
@@ -75,6 +82,9 @@ class Chromosome():
 #c2 = Chromosome(num_cities = 10)
 
 #print(c1.breed(c2, 3))
+#print(c1.getChromosome())
+#c1.mutate()
+#print(c1.getChromosome())
 
 #intact = [4, 0, 2]
 #num_cities = 6
