@@ -41,7 +41,7 @@ class Chromosome():
 
 	def fitness(self, cities):
 		cities_sorted = [cities.getCities()[i] for i in self.chromosome]
-		return sum([self.distance(cities_sorted[i], cities_sorted[i+1]) if i+1 < self.num_cities else self.distance(cities_sorted[i], cities_sorted[0]) for i in range(self.num_cities)])
+		return 1 / sum([self.distance(cities_sorted[i], cities_sorted[i+1]) if i+1 < self.num_cities else self.distance(cities_sorted[i], cities_sorted[0]) for i in range(self.num_cities)])
 
 	def breed(self, chromosome, len_intact):
 		start = random.randint(0, self.num_cities-1)

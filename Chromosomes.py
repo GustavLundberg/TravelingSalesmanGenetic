@@ -32,15 +32,12 @@ class Chromosomes:
 		return self.fitness
 
 	# Swaps two random genes with some probability
-	def mutateGeneration(self, probability = 0.1):
-		probs = uniform(size = self.population_size)
-		#print('Inside before: ', self.chromosomes)
-		for tup in zip(probs, self.chromosomes):
-			if tup[0] < probability:
-				tup[1].mutate()
-		#map(Chromosome.mutate, self.chromosomes)
-		#self.chromosomes = [tup[1].mutate() for tup in zip(probs, self.chromosomes) if tup[0] < probability]
-		#print('Inside after: ', self.chromosomes)
+	def mutateGeneration(self, probability = 0.1, num_mutations = 1):
+		for i in range(num_mutations):
+			probs = uniform(size = self.population_size)
+			for tup in zip(probs, self.chromosomes):
+				if tup[0] < probability:
+					tup[1].mutate()
 		return
 
 	def sortPopulation(self):
@@ -50,7 +47,7 @@ class Chromosomes:
 		def fitnessKey(tuple_chromosome_fitness):
 			return tuple_chromosome_fitness[1] # Sorting by the second element of the tuple
 
-		population = sorted(population, key = fitnessKey)
+		population = sorted(population, key = fitnessKey, reverse = True)
 		self.chromosomes = [tup[0] for tup in population]
 		self.fitness = [tup[1] for tup in population]
 		return
@@ -66,12 +63,12 @@ class Chromosomes:
 		p_normalized = [e / (reduce_factor*10) if e < sorted(p_normalized, reverse = False)[int(self.population_size / 10)] else e for e in p_normalized] # / 1000
 		# Make the weight larger if a chromosome has a larger fitness than 90 % of the other chromosomes
 		p_normalized = [e * increase_factor if e > sorted(p_normalized, reverse = True)[int(self.population_size / 10)] else e for e in p_normalized] # e * 2, /10
-		p_normalized = [e * increase_factor * 2 if e > sorted(p_normalized, reverse = True)[int(self.population_size / 100)] else e for e in p_normalized] # e * 5, /100
+		p_normalized = [e * increase_factor * 100 if e > sorted(p_normalized, reverse = True)[int(self.population_size / 100)] else e for e in p_normalized] # e * 5, /100
 
 
 		#print('---------------', p_normalized)
 		#print('p_temp', p_temp)
-		p = [1/f_outer *  1/sum([1/f_inner for f_inner in p_normalized]) for f_outer in p_normalized]
+		p = [f_outer *  1/sum([f_inner for f_inner in p_normalized]) for f_outer in p_normalized]
 
 
 		#p = [1/f_outer *  1/sum([1/f_inner for f_inner in self.fitness]) for f_outer in self.fitness]
